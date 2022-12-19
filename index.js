@@ -1,10 +1,12 @@
 import express from 'express';
 import mongoose from 'mongoose';
+import cors from 'cors';
 import { registerValidation, loginValidation } from './validation.js';
 import * as UserController from './controllers/UserController.js';
+import checkAuth from './utils/checkAuth.js';
 
 const app = express(); // создаем сервер
-
+app.use(cors());
 mongoose
   .connect()
   .then(() => {
@@ -16,6 +18,7 @@ app.use(express.json()); //позволяет читать нам (нашему 
 
 app.post('/auth/register', registerValidation, UserController.register);
 app.post('/auth/login', loginValidation, UserController.login);
+app.get('/auth/me', checkAuth, UserController.getUser);
 
 app.listen(3333, (err) => {
   if (err) console.log(err);
